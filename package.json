@@ -4,8 +4,10 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "cargo tauri dev",
-    "build": "cargo tauri build"
+    "dev": "tauri dev",
+    "build": "tauri build"
   },
-  "devDependencies": {}
+  "devDependencies": {
+    "@tauri-apps/cli": "2.11.4"
+  }
 }
