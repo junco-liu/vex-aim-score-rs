@@ -1,0 +1,11 @@
+{
+  "name": "vex-aim-score",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "cargo tauri dev",
+    "build": "cargo tauri build"
+  },
+  "devDependencies": {}
+}

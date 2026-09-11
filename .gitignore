@@ -1,0 +1,24 @@
+# Local agent configuration
+.agents/
+
+# Rust and Tauri build output
+target/
+src-tauri/target/
+
+# Node.js dependencies and logs
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Local environment files
+.env
+.env.*
+!.env.example
+
+# Editor and operating system files
+.vscode/
+.idea/
+.DS_Store
+Thumbs.db

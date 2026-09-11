@@ -1,0 +1,137 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>VEX Aim Score</title>
+    <style>
+      :root {
+        color: #17202a;
+        background: #f6f8fb;
+        font-family: "Segoe UI", Arial, sans-serif;
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        min-height: 100vh;
+        display: grid;
+        place-items: center;
+      }
+
+      main {
+        width: min(720px, calc(100vw - 32px));
+        display: grid;
+        gap: 18px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 32px;
+        font-weight: 700;
+      }
+
+      p {
+        margin: 0;
+        color: #52616f;
+        line-height: 1.6;
+      }
+
+      form {
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: 10px;
+      }
+
+      input,
+      button {
+        height: 44px;
+        border-radius: 8px;
+        font: inherit;
+      }
+
+      input {
+        border: 1px solid #cfd7df;
+        padding: 0 12px;
+        background: white;
+      }
+
+      button {
+        border: 0;
+        padding: 0 18px;
+        color: white;
+        background: #0f766e;
+        cursor: pointer;
+      }
+
+      button:disabled {
+        cursor: wait;
+        opacity: 0.65;
+      }
+
+      pre {
+        min-height: 118px;
+        margin: 0;
+        padding: 14px;
+        overflow: auto;
+        border: 1px solid #d8e0e8;
+        border-radius: 8px;
+        background: white;
+        color: #203040;
+      }
+
+      @media (max-width: 560px) {
+        form {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>VEX Aim Score</h1>
+      <p>输入网页地址后会打开目标页面，并注入蓝牙与键盘桥接接口。</p>
+      <form id="open-form">
+        <input id="url-input" autocomplete="url" placeholder="https://example.com" required />
+        <button id="open-button" type="submit">打开</button>
+      </form>
+      <pre id="status">正在读取蓝牙缓存...</pre>
+    </main>
+
+    <script>
+      const invoke = (cmd, payload = {}) => window.__TAURI_INTERNALS__.invoke(cmd, payload);
+      const form = document.querySelector("#open-form");
+      const input = document.querySelector("#url-input");
+      const button = document.querySelector("#open-button");
+      const status = document.querySelector("#status");
+
+      input.value = localStorage.getItem("lastUrl") || "";
+
+      async function refreshStatus() {
+        const info = await invoke("get_bluetooth_info");
+        status.textContent = JSON.stringify(info, null, 2);
+      }
+
+      form.addEventListener("submit", async (event) => {
+        event.preventDefault();
+        button.disabled = true;
+        try {
+          localStorage.setItem("lastUrl", input.value);
+          await invoke("open_url", { url: input.value });
+          await refreshStatus();
+        } catch (error) {
+          status.textContent = String(error);
+        } finally {
+          button.disabled = false;
+        }
+      });
+
+      refreshStatus().catch((error) => {
+        status.textContent = String(error);
+      });
+    </script>
+  </body>
+</html>
